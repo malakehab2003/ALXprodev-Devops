@@ -35,4 +35,6 @@ fi
 
 echo "Averages,$avg_height,$avg_weight" >> "$report_file"
 
+sed -i 's/Averages/Summary:/g' "$report_file"
+
 echo "Report generated: $report_file"
