@@ -1,0 +1,28 @@
+#!/bin/bash
+
+pokemon_list=("bulbasaur" "ivysaur" "venusaur" "charmander" "charmeleon")
+
+api_url="https://pokeapi.co/api/v2/pokemon/"
+
+fetch_pokemon_data() {
+    local pokemon_name="$1"
+    local formatted_name=$(echo "$pokemon_name" | awk '{print tolower($0)}')
+    
+    response=$(curl -s -w "%{http_code}" -o "${formatted_name}.json" "${api_url}${formatted_name}")
+    
+    if [[ "$response" -eq 200 ]]; then
+        echo "Data for $pokemon_name saved to ${formatted_name}.json"
+    else
+        echo "Failed to fetch data for $pokemon_name. HTTP Status: $response" >> errors.txt
+        rm -f "${formatted_name}.json"
+    fi
+}
+
+for pokemon in "${pokemon_list[@]}"; do
+    fetch_pokemon_data "$pokemon" &
+    sleep 1
+done
+
+wait
+
+echo "All requests completed."
