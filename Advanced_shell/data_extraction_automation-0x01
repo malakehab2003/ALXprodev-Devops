@@ -13,4 +13,6 @@ formatted_weight=$(echo "$weight" | sed 's/Weight: //')
 converted_height=$(echo "$formatted_height" | awk '{print $1 / 10}')
 converted_weight=$(echo "$formatted_weight" | awk '{print $1 / 10}')
 
-echo "$formatted_name is of type $formatted_type, weighs ${converted_weight}kg, and is ${converted_height}m tall."
+output="$formatted_name is of type $formatted_type, weighs ${converted_weight}kg, and is ${converted_height}m tall."
+
+echo "$output"
