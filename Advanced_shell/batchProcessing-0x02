@@ -7,16 +7,28 @@ api_url="https://pokeapi.co/api/v2/pokemon/"
 fetch_pokemon_data() {
     local pokemon_name="$1"
     local formatted_name=$(echo "$pokemon_name" | awk '{print tolower($0)}')
-
-    echo "Fetching data for $pokemon_name..."
     
-    response=$(curl -s -w "%{http_code}" -o "${formatted_name}.json" "${api_url}${formatted_name}")
-
-    if [[ "$response" -ne 200 ]]; then
-        echo "Failed to fetch data for $pokemon_name. HTTP Status: $response" >> errors.txt
+    local attempt=0
+    local success=false
+    while [[ $attempt -lt 3 ]]; do
+        attempt=$((attempt + 1))
+        echo "Attempt $attempt to fetch data for $pokemon_name..."
+        
+        response=$(curl -s -w "%{http_code}" -o "${formatted_name}.json" "${api_url}${formatted_name}")
+        
+        if [[ "$response" -eq 200 ]]; then
+            echo "Data for $pokemon_name saved to ${formatted_name}.json"
+            success=true
+            break
+        else
+            echo "Failed to fetch data for $pokemon_name. HTTP Status: $response (Attempt $attempt)"
+            sleep 2
+        fi
+    done
+    
+    if [[ "$success" == false ]]; then
+        echo "Failed to fetch data for $pokemon_name after 3 attempts. Logging error." >> errors.txt
         rm -f "${formatted_name}.json"
-    else
-        echo "Data for $pokemon_name saved to ${formatted_name}.json"
     fi
 }
 
