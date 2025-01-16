@@ -10,4 +10,6 @@ formatted_weight=$(echo "$weight" | awk '{print $1 / 10}')
 
 output="$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
 
+output=$(echo "$output" | sed 's/type/category/')
+
 echo "$output"
