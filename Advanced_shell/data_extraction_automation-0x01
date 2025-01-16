@@ -1,15 +1,11 @@
 #!/bin/bash
 
-INPUT_FILE="data.json"
+name=$(jq -r '.name' data.json)
+type=$(jq -r '.types[0].type.name' data.json)
+height=$(jq -r '.height' data.json)
+weight=$(jq -r '.weight' data.json)
 
-if [ ! -f "$INPUT_FILE" ]; then
-    echo "Error: JSON file '$INPUT_FILE' not found. Please fetch the data first."
-    exit 1
-fi
+formatted_height=$(awk "BEGIN {print $height / 10}")
+formatted_weight=$(awk "BEGIN {print $weight / 10}")
 
-NAME=$(jq -r '.name' $INPUT_FILE | awk '{print toupper(substr($0, 1, 1))tolower(substr($0, 2))}')
-HEIGHT=$(jq -r '.height' $INPUT_FILE | awk '{print $0 / 10}') # Convert decimetres to metres
-WEIGHT=$(jq -r '.weight' $INPUT_FILE | awk '{print $0 / 10}') # Convert hectograms to kilograms
-TYPE=$(jq -r '.types[0].type.name' $INPUT_FILE | sed 's/.*/\u&/') # Capitalize the type
-
-echo "$NAME is of type $TYPE, weighs ${WEIGHT}kg, and is ${HEIGHT}m tall."
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
